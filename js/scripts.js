@@ -11,7 +11,7 @@ function Board() {
 
 function Space(x, y) {
   this.position = [x, y];
-  this.markedBy;
+  this.markedBy = undefined;
 }
 
 function Player(mark) {
@@ -77,6 +77,15 @@ Game.prototype.checkForWinner = function(spaceMarked) {
       }
     }
   }
+  var holder = [];
+  this.board.spaces.forEach(function(space) {
+    if (space.markedBy !== undefined) {
+      holder.push(space.markedBy);
+    }
+  });
+  if (holder.length === 9) {
+    return "catsGame";
+  }
 }
 
 //USER INTERFACE LOGIC
@@ -85,6 +94,14 @@ $(document).ready(function() {
   var game = new Game();
   game.build();
   var activePlayer = game.playerOne;
+
+  function resetGame () {
+    game.build();
+    $('.box').each(function() {
+      $(this).text("");
+    });
+    activePlayer = game.playerOne;
+  }
 
   $('.box').click(function() {
     //get this boxes x and y coordinates
@@ -104,8 +121,13 @@ $(document).ready(function() {
       activePlayer = game.playerOne;
     }
     //check if there is a winner
-    if (game.checkForWinner(spaceToMark)) {
-      alert("winner")
+    var winnerCheck = game.checkForWinner(spaceToMark);
+    if (winnerCheck === true) {
+      alert("winner");
+      resetGame();
+    } else if (winnerCheck === "catsGame") {
+      alert("cats game");
+      resetGame();
     }
   });
 });
