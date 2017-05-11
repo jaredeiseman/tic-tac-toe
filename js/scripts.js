@@ -29,10 +29,6 @@ Game.prototype.build = function() {
   }
 }
 
-Space.prototype.coords = function() {
-  return this.position;
-}
-
 Space.prototype.markedBy = function() {
   return this.markedBy;
 }
@@ -53,10 +49,8 @@ Player.prototype.markSpace = function(space) {
 }
 
 Array.prototype.compareArrays = function(array) {
-  for (var i = 0; i < this.length; i++) {
-    if (this[i] === array[i]) {
-      return i;
-    }
+  if (this[0] === array[0] && this[1] === array[1]) {
+    return true;
   }
   return false;
 }
@@ -66,10 +60,23 @@ Game.prototype.checkForWinner = function(spaceMarked) {
   //array of array with winning coordinates combinations
   // [ [[1,1], [1,2], [1,3]],
   //   [[...], [...], [...]] ]
+  var winningCombinations = [[[1,1],[1,2],[1,3]],[[2,1],[2,2],[2,3]],[[3,1],[3,2],[3,3]],[[1,1],[2,1],[3,1]],[[1,2],[2,2],[3,2]],[[1,3],[2,3],[3,3]],[[1,1],[2,2],[3,3]],[[3,1],[2,2],[1,3]]];
   // loop over outer array
+  for (var i = 0; i < winningCombinations.length; i++) {
     //loop over inner array
+    for (var j = 0; j < winningCombinations[i].length; j++) {
       // if any of those inner inner inner arrays match the space marked
+      if (winningCombinations[i][j].compareArrays(spaceMarked.position)) {
         //check the other coordinates to see if the mark matches
+        var x = this.board.find(winningCombinations[i][0]);
+        var y = this.board.find(winningCombinations[i][1]);
+        var z = this.board.find(winningCombinations[i][2]);
+        if (x.markedBy === y.markedBy && x.markedBy === z.markedBy) {
+          return true;
+        }
+      }
+    }
+  }
 }
 
 //USER INTERFACE LOGIC
@@ -89,7 +96,6 @@ $(document).ready(function() {
 
     //mark this box
     var spaceToMark = game.board.find([x,y]);
-    console.log(spaceToMark);
     $(this).text(activePlayer.markSpace(spaceToMark));
     //toggle the player
     if (activePlayer === game.playerOne) {
@@ -98,6 +104,8 @@ $(document).ready(function() {
       activePlayer = game.playerOne;
     }
     //check if there is a winner
-    console.log(game.checkForWinner(spaceToMark));
+    if (game.checkForWinner(spaceToMark)) {
+      alert("winner")
+    }
   });
 });
