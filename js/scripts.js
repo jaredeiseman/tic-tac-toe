@@ -3,6 +3,7 @@ function Game() {
   this.board;
   this.playerOne;
   this.playerTwo;
+  this.activePlayer;
 }
 
 function Board() {
@@ -27,6 +28,7 @@ Game.prototype.build = function() {
       this.board.spaces.push(new Space(i + 1, j + 1));
     }
   }
+  this.activePlayer = this.playerOne;
 }
 
 Space.prototype.markedBy = function() {
@@ -55,12 +57,23 @@ Array.prototype.compareCoordinates = function(array) {
   return false;
 }
 
+//swap active player
+Game.prototype.swapActive = function() {
+  if (this.activePlayer === this.playerOne) {
+    this.activePlayer = this.playerTwo;
+  } else {
+    this.activePlayer = this.playerOne;
+  }
+}
+
 Game.prototype.checkForWinner = function(spaceMarked) {
   //check space around spaceMarked if they match, then win
   //array of array with winning coordinates combinations
   // [ [[1,1], [1,2], [1,3]],
   //   [[...], [...], [...]] ]
-  var winningCombinations = [[[1,1],[1,2],[1,3]],[[2,1],[2,2],[2,3]],[[3,1],[3,2],[3,3]],[[1,1],[2,1],[3,1]],[[1,2],[2,2],[3,2]],[[1,3],[2,3],[3,3]],[[1,1],[2,2],[3,3]],[[3,1],[2,2],[1,3]]];
+  var winningCombinations = [[[1,1],[1,2],[1,3]],[[2,1],[2,2],[2,3]],[[3,1],[3,2],
+                              [3,3]],[[1,1],[2,1],[3,1]],[[1,2],[2,2],[3,2]],[[1,3],
+                              [2,3],[3,3]],[[1,1],[2,2],[3,3]],[[3,1],[2,2],[1,3]]];
   // loop over outer array
   for (var i = 0; i < winningCombinations.length; i++) {
     //loop over inner array
@@ -90,18 +103,18 @@ Game.prototype.checkForWinner = function(spaceMarked) {
 
 //USER INTERFACE LOGIC
 $(document).ready(function() {
-  //construct the game
-  var game = new Game();
-  game.build();
-  var activePlayer = game.playerOne;
-
-  function resetGame () {
+  //function to reset the game
+  function resetGame() {
     game.build();
     $('.box').each(function() {
       $(this).text("");
     });
-    activePlayer = game.playerOne;
+    game.activePlayer = game.playerOne;
   }
+
+  //construct the game
+  var game = new Game();
+  game.build();
 
   $('.box').click(function() {
     //get this boxes x and y coordinates
@@ -113,13 +126,9 @@ $(document).ready(function() {
 
     //mark this box
     var spaceToMark = game.board.find([x,y]);
-    $(this).text(activePlayer.markSpace(spaceToMark));
+    $(this).text(game.activePlayer.markSpace(spaceToMark));
     //toggle the player
-    if (activePlayer === game.playerOne) {
-      activePlayer = game.playerTwo;
-    } else {
-      activePlayer = game.playerOne;
-    }
+    game.swapActive();
     //check if there is a winner
     var winnerCheck = game.checkForWinner(spaceToMark);
     if (winnerCheck === true) {
