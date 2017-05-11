@@ -52,8 +52,24 @@ Player.prototype.markSpace = function(space) {
   return space.markedBy;
 }
 
-Game.prototype.checkForWinner = function() {
-  //DO THIS LATER AFTER STUFF IS WORKING IN THE UI
+Array.prototype.compareArrays = function(array) {
+  for (var i = 0; i < this.length; i++) {
+    if (this[i] === array[i]) {
+      return i;
+    }
+  }
+  return false;
+}
+
+Game.prototype.checkForWinner = function(spaceMarked) {
+  //check space around spaceMarked if they match, then win
+  //array of array with winning coordinates combinations
+  // [ [[1,1], [1,2], [1,3]],
+  //   [[...], [...], [...]] ]
+  // loop over outer array
+    //loop over inner array
+      // if any of those inner inner inner arrays match the space marked
+        //check the other coordinates to see if the mark matches
 }
 
 //USER INTERFACE LOGIC
@@ -68,8 +84,8 @@ $(document).ready(function() {
     //jQuery returns an array of objects that match the selector
     //$(this) is the selector, [0] is the first and only element in the array
     //dataset.row/col is how it stores the data for data-row/data-col from the html
-    var x = parseInt($(this)[0].dataset.row);
-    var y = parseInt($(this)[0].dataset.col);
+    var x = parseInt($(this).attr('data-row'));
+    var y = parseInt($(this).attr('data-col'));
 
     //mark this box
     var spaceToMark = game.board.find([x,y]);
@@ -82,5 +98,6 @@ $(document).ready(function() {
       activePlayer = game.playerOne;
     }
     //check if there is a winner
+    console.log(game.checkForWinner(spaceToMark));
   });
 });
