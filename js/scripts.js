@@ -1,3 +1,4 @@
+//BUSINESS LOGIC
 function Game() {
   this.board;
   this.playerOne;
@@ -51,8 +52,35 @@ Player.prototype.markSpace = function(space) {
   return space.markedBy;
 }
 
-var game = new Game();
-game.build();
-var spaceToMark = game.board.find([1,1]);
-game.playerOne.markSpace(spaceToMark);
-console.log(game.board.find([1,1]));
+Game.prototype.checkForWinner = function() {
+  //DO THIS LATER AFTER STUFF IS WORKING IN THE UI
+}
+
+//USER INTERFACE LOGIC
+$(document).ready(function() {
+  //construct the game
+  var game = new Game();
+  game.build();
+  var activePlayer = game.playerOne;
+
+  $('.box').click(function() {
+    //get this boxes x and y coordinates
+    //jQuery returns an array of objects that match the selector
+    //$(this) is the selector, [0] is the first and only element in the array
+    //dataset.row/col is how it stores the data for data-row/data-col from the html
+    var x = parseInt($(this)[0].dataset.row);
+    var y = parseInt($(this)[0].dataset.col);
+
+    //mark this box
+    var spaceToMark = game.board.find([x,y]);
+    console.log(spaceToMark);
+    $(this).text(activePlayer.markSpace(spaceToMark));
+    //toggle the player
+    if (activePlayer === game.playerOne) {
+      activePlayer = game.playerTwo;
+    } else {
+      activePlayer = game.playerOne;
+    }
+    //check if there is a winner
+  });
+});
