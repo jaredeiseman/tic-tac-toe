@@ -48,7 +48,7 @@ Player.prototype.markSpace = function(space) {
   return space.markedBy;
 }
 
-Array.prototype.compareArrays = function(array) {
+Array.prototype.compareCoordinates = function(array) {
   if (this[0] === array[0] && this[1] === array[1]) {
     return true;
   }
@@ -66,7 +66,7 @@ Game.prototype.checkForWinner = function(spaceMarked) {
     //loop over inner array
     for (var j = 0; j < winningCombinations[i].length; j++) {
       // if any of those inner inner inner arrays match the space marked
-      if (winningCombinations[i][j].compareArrays(spaceMarked.position)) {
+      if (winningCombinations[i][j].compareCoordinates(spaceMarked.position)) {
         //check the other coordinates to see if the mark matches
         var x = this.board.find(winningCombinations[i][0]);
         var y = this.board.find(winningCombinations[i][1]);
